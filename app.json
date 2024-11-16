@@ -1,0 +1,18 @@
+{
+    "pages": [
+        "pages/index/index",
+        "pages/device/device"
+    ],
+    "window": {
+        "backgroundTextStyle": "light",
+        "navigationBarBackgroundColor": "#01a4ef",
+        "navigationBarTitleText": "易加蓝牙助手",
+        "navigationBarTextStyle": "white"
+    },
+    "__usePrivacyCheck__": true,
+    "usingComponents": {
+        "privacy": "components/privacy/privacy"
+    },
+    "style": "v2",
+    "sitemapLocation": "sitemap.json"
+}

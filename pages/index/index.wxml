@@ -1,0 +1,22 @@
+<!--index.wxml-->
+
+<scroll-view class="main-container" scroll-y="true">
+    <privacy></privacy>
+    <!-- <button open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">点击</button> -->
+    <button bindtap="lanya">点击1</button>
+    <view wx:for="{{deviceListDataShow}}" wx:key="id" class="list-item" hover-class="list-item-hover" hover-start-time="0" hover-stay-time="100" 
+    bindtap="listViewTap" data-name="{{item}}">
+        <image wx:if="{{item.manufacturer==='eciot'}}" src="/img/ecble.png" class="list-item-img"></image>
+        <image wx:else src="/img/ble.png" class="list-item-img"></image>
+        <text class="list-item-name">{{item.name}}</text>
+        <image wx:if="{{item.rssi >= -41}}" src="/img/s5.png" mode="aspectFit" class="list-item-rssi-img"></image>
+        <image wx:elif="{{item.rssi >= -55}}" src="/img/s4.png" mode="aspectFit" class="list-item-rssi-img"></image>
+        <image wx:elif="{{item.rssi >= -65}}" src="/img/s3.png" mode="aspectFit" class="list-item-rssi-img"></image>
+        <image wx:elif="{{item.rssi >= -75}}" src="/img/s2.png" mode="aspectFit" class="list-item-rssi-img"></image>
+        <image wx:elif="{{item.rssi < -75}}" src="/img/s1.png" mode="aspectFit" class="list-item-rssi-img"></image>
+        <text class="list-item-rssi">{{item.rssi}}</text>
+        <view class="list-item-line"></view>
+    </view>
+    <view wx:if="{{deviceListDataShow.length==0}}" class="notice"> - 未发现设备，请确认蓝牙是否打开 - </view>
+    <view class="gap"></view>
+</scroll-view>
