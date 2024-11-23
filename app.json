@@ -1,12 +1,14 @@
 {
+  "entryPagePath": "pages/excel/excel",
     "pages": [
         "pages/index/index",
-        "pages/device/device"
+        "pages/device/device",
+        "pages/excel/excel"
     ],
     "window": {
         "backgroundTextStyle": "light",
         "navigationBarBackgroundColor": "#01a4ef",
-        "navigationBarTitleText": "易加蓝牙助手",
+        "navigationBarTitleText": "温度数据分析工具",
         "navigationBarTextStyle": "white"
     },
     "__usePrivacyCheck__": true,
@@ -14,5 +16,10 @@
         "privacy": "components/privacy/privacy"
     },
     "style": "v2",
+    "permission": {
+      "scope": {
+        "writePhotosAlbum": "保存图片到相册"
+      }
+    },
     "sitemapLocation": "sitemap.json"
 }

@@ -6,7 +6,12 @@ let ctx
 Page({
     data: {
         deviceListData: [],
-        deviceListDataShow: [],
+        deviceListDataShow: [
+          {
+            manufacturer:'qq',
+            name:""
+          }
+        ],
     },
     onLoad() {
         ctx = this
@@ -15,19 +20,6 @@ Page({
         }, 400)
     },
     onShow() {
-       
-    },
-    lanya(){
-      // wx.getUserInfo({
-      //   success(res) {
-      //     // const userInfo = res.userInfo;
-      //     console.log(res.userInfo);
-      //   },
-      //   fail() {
-      //     console.log('获取用户信息失败');
-      //   }
-      // });
-      console.log('点击了，123')
       ctx.setData({ deviceListData: [] })
       ctx.setData({ deviceListDataShow: [] })
       setTimeout(() => {
@@ -51,8 +43,8 @@ Page({
         ecBLE.onBLEConnectionStateChange(res => {
             ecUI.hideLoading()
             if (res.ok) {
-                // ecBLE.stopBluetoothDevicesDiscovery()
-                wx.navigateTo({ url: '../device/device' })
+                ecBLE.stopBluetoothDevicesDiscovery()
+                wx.navigateTo({ url: '../excel/excel' })
             } else {
                 ecUI.showModal(
                     '提示',

@@ -1,0 +1,10 @@
+{
+  "usingComponents": {
+    "lineChart": "/components/lineChart/lineChart",
+    "ec-canvas": "/ec-canvas/ec-canvas",
+    "dialog":"/components/vant/dialog/index",
+    "van-radio-group":"/components/vant/radio-group",
+    "van-radio":"/components/vant/radio"
+  },
+  "navigationBarBackgroundColor":"#65E893"
+}

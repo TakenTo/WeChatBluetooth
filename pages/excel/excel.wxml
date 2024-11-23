@@ -1,0 +1,60 @@
+<!--pages/excel/excel.wxml-->
+<view class="navTop">
+  <image bind:tap="openSetDialog" src="/img/set.png" mode="aspectFit" class="set-img"></image>
+  <view class="temperature-box">
+      <text class="temperature">{{WenInfo.temperature}}{{WenInfo.unit}}</text>
+  </view>
+  <view style="padding:36rpx 0 0 15rpx">
+      <text style="color: #fff;font-size: 26rpx;">上次更新时间：{{WenInfo.time}}</text>
+  </view>
+  <!-- 阴影 -->
+  <view class="deviceInfo">
+    <view style="display: flex;justify-content: space-between;">
+      <view style="margin-bottom: 25rpx;">
+        <text style="font-size:20px;color: rgb(19, 19, 20);font-weight: 600;">{{WenInfo.name}}</text>
+        <image bind:tap="openNameDialog" src="/img/edit.png" mode="aspectFit" class="edit-img"></image>
+      </view>
+      <view bind:tap="openSetting"> 
+        <text style="font-size:28rpx;color: #606266;">查看历史体温</text>
+      </view>
+    </view>
+    <view>
+      <text style="font-size: 26rpx;">电池电量：</text>
+      <text style="font-weight: 600;font-size: 38rpx;">{{WenInfo.dianliang}}</text>
+    </view>
+  </view>
+</view>
+<view class="icon-box">
+  <view>
+    <image src="/img/del.png" mode="aspectFit" class="del-img"></image>
+    <image  bind:tap="exportExcel" src="/img/down1.png" mode="aspectFit" class="down-img"></image>
+  </view>
+</view>
+<view class="echart_panel">
+  <ec-canvas ec="{{ ecLine }}"></ec-canvas>
+</view>
+<!-- 设备名称-弹窗 -->
+<dialog bindclose="nameClose" asyncClose="{{true}}" bindconfirm="nameConfirm"  confirmButtonColor="{{mainColor}}"showCancelButton="{{true}}" useSlot="{{true}}" title='设备名称修改'       zIndex="{{zIndex}}" show="{{ nameVisible }}">
+  <view class="order_item flex-h flex-vc">
+      <view class="name">设备名称</view>
+      <input maxlength="{{10}}" class="input_text_sty" type="text" placeholder-class='input-placeholder' placeholder="请输入设备名称" bindinput="nameInput" />
+    </view>
+</dialog>
+<!-- 设置-弹窗 -->
+<dialog bindclose="setInfoClose" asyncClose="{{true}}" bindconfirm="setInfoConfirm" confirmButtonColor="{{mainColor}}" showCancelButton="{{true}}" useSlot="{{true}}" title='设置' zIndex="{{zIndex}}" show="{{ setVisible }}">
+  <view class="order_item flex-h flex-vc">
+      <view class="name">温度单位</view>
+      <van-radio-group class="flex-h" value="{{ setObj.unit }}" bind:change="unitChange">
+        <van-radio checked-color="{{mainColor}}" style="margin-right: 80rpx;" name="1">℃</van-radio>
+        <van-radio checked-color="{{mainColor}}" name="2">℉</van-radio>
+      </van-radio-group>
+  </view>
+  <view class="order_item flex-h flex-vc">
+    <view class="name">报警开关</view>
+    <switch color="{{mainColor}}" checked="{{setObj.isWarn}}" bindchange="offOnChange"/>
+  </view>
+  <view class="order_item flex-h flex-vc">
+      <view class="name">温度报警值</view>
+      <input maxlength="{{10}}" class="input_text_sty" type="text" placeholder-class='input-placeholder' placeholder="请输入温度报警值" bindinput="WenValueInput" />
+    </view>
+</dialog>

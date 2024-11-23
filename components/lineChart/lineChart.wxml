@@ -1,0 +1,7 @@
+<view class="scoreBox">
+  <view class="til">得分走势</view>
+  <view class="echart_panel">
+    <ec-canvas ec="{{ ecLine }}"></ec-canvas>
+  </view>
+  <!-- <view class="result_desc">学科：{{gradesDesc.subject}}</view> -->
+</view>
