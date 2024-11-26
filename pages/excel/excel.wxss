@@ -1,6 +1,14 @@
+.excel-container{
+  display: flex;
+  height: 90vh;
+  flex-direction: column;
+  padding-bottom: 120rpx;
+  overflow: hidden;
+}
 .echart_panel{
   width: 100%;
-  height: 500rpx;
+  /* height: 500rpx; */
+  flex: 1;
 }
 .navTop{
   height: 420rpx;
@@ -38,7 +46,7 @@
   text-align: center;
 }
 .icon-box{
-  padding: 155rpx 30rpx 0rpx 0;
+  padding: 155rpx 30rpx 10rpx 0;
   display: flex;
   justify-content: flex-end;
   position: relative;
@@ -86,4 +94,32 @@ input::placeholder {
   width: 35rpx;
   height: 35rpx;
   margin-left: 20rpx;
+}
+.vanPop{
+  height: 95%;
+  overflow:hidden;
+  display: flex;
+  flex-direction: column;
+}
+.vanclose{
+  position: absolute;
+  right: 10rpx;
+}
+.hsitoryTop{
+  height:30rpx;
+  text-align: center;
+  position: relative;
+  padding: 26rpx 0;
+  box-shadow: 0px 6rpx 10rpx rgba(211, 231, 251, 0.72);
+  /* border-bottom:1px solid#bbb4b4; */
+}
+.tableTop{
+  flex:1;
+  text-align: center;
+  padding: 10rpx 0;
+}
+.table-container{
+  /* height: 600px; */
+  flex:1;
+  overflow-y: auto;
 }

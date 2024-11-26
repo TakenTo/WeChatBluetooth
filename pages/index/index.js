@@ -58,7 +58,6 @@ Page({
     openBluetoothAdapter() {
       console.log('index.js,openBluetoothAdapter')
         ecBLE.onBluetoothAdapterStateChange(res => {
-          console.log('什么呀呀呀呀呀呀',res)
             if (res.ok) {
                 console.log('Bluetooth adapter ok')
                 ctx.startBluetoothDevicesDiscovery()

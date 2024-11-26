@@ -4,7 +4,9 @@
     "ec-canvas": "/ec-canvas/ec-canvas",
     "dialog":"/components/vant/dialog/index",
     "van-radio-group":"/components/vant/radio-group",
-    "van-radio":"/components/vant/radio"
+    "van-radio":"/components/vant/radio",
+    "van-popup":"/components/vant/popup",
+    "van-icon":"/components/vant/icon"
   },
   "navigationBarBackgroundColor":"#65E893"
 }

@@ -130,7 +130,6 @@ const openBluetoothAdapter = async () => {
         return
     }
     const setting = await getSetting() //小程序蓝牙权限
-    console.log('没有啊啊啊Oksetting',setting)
 
     if (!setting.ok) {
         const authRes = await authorize()
@@ -276,12 +275,12 @@ const notifyBLECharacteristicValueChange = (serviceId, characteristicId) => {
             serviceId,
             characteristicId,
             success(res) {
-                log(res)
+                console.log('监听成功',res)
                 // {"errCode":0,"errno":0,"errMsg":"notifyBLECharacteristicValueChange:ok"}
                 resolve({ ok: true, errCode: 0, errMsg: '' })
             },
             fail(res) {
-                log(res)
+              console.log('监听失败',res)
                 resolve({ ok: false, errCode: res.errCode, errMsg: res.errMsg })
             },
         })
@@ -389,7 +388,7 @@ const closeBLEConnection = () => {
         },
     })
 }
-
+// 实时获取蓝牙设备发来的数据
 const onBLECharacteristicValueChange = cb => {
     wx.offBLECharacteristicValueChange()
     wx.onBLECharacteristicValueChange(res => {

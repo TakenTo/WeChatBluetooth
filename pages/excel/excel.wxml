@@ -1,43 +1,52 @@
 <!--pages/excel/excel.wxml-->
-<view class="navTop">
-  <image bind:tap="openSetDialog" src="/img/set.png" mode="aspectFit" class="set-img"></image>
-  <view class="temperature-box">
-      <text class="temperature">{{WenInfo.temperature}}{{WenInfo.unit}}</text>
-  </view>
-  <view style="padding:36rpx 0 0 15rpx">
-      <text style="color: #fff;font-size: 26rpx;">上次更新时间：{{WenInfo.time}}</text>
-  </view>
-  <!-- 阴影 -->
-  <view class="deviceInfo">
-    <view style="display: flex;justify-content: space-between;">
-      <view style="margin-bottom: 25rpx;">
-        <text style="font-size:20px;color: rgb(19, 19, 20);font-weight: 600;">{{WenInfo.name}}</text>
-        <image bind:tap="openNameDialog" src="/img/edit.png" mode="aspectFit" class="edit-img"></image>
+<view class="excel-container">
+  <view class="navTop">
+    <image bind:tap="openSetDialog" src="/img/set.png" mode="aspectFit" class="set-img"></image>
+    <view class="temperature-box">
+        <text class="temperature">{{WenInfo.temperature}}{{WenInfo.unit}}</text>
+    </view>
+    <view style="padding:42rpx 15px 0 15rpx;display: flex;justify-content: space-between;">
+      <view>
+          <text style="color: #fff;font-size: 26rpx;">温度报警值：</text>
+          <text style="font-weight: 500;color: #fff;">{{WenInfo.warnValue}}{{WenInfo.unit}}</text>
       </view>
-      <view bind:tap="openSetting"> 
-        <text style="font-size:28rpx;color: #606266;">查看历史体温</text>
+      <view>
+          <text style="color: #fff;font-size: 26rpx;">报警开关：</text>
+          <text style="font-weight: 500;color: #fff;">{{WenInfo.warnStatus}}</text>
       </view>
     </view>
+    <!-- 阴影 -->
+    <view class="deviceInfo">
+      <view style="display: flex;justify-content: space-between;">
+        <view style="margin-bottom: 25rpx;">
+          <text style="font-size:20px;color: rgb(19, 19, 20);font-weight: 600;">{{WenInfo.name}}</text>
+          <image bind:tap="openNameDialog" src="/img/edit.png" mode="aspectFit" class="edit-img"></image>
+        </view>
+        <view bind:tap="openHistory" data-param="{{true}}"> 
+          <text style="font-size:28rpx;color: #606266;">查看历史体温</text>
+        </view>
+      </view>
+      <view>
+        <text style="font-size: 26rpx;">电池电量：</text>
+        <text style="font-weight: 600;font-size: 38rpx;">{{WenInfo.dianliang}}</text>
+      </view>
+    </view>
+  </view>
+  <view class="icon-box">
     <view>
-      <text style="font-size: 26rpx;">电池电量：</text>
-      <text style="font-weight: 600;font-size: 38rpx;">{{WenInfo.dianliang}}</text>
+      <image src="/img/del.png" mode="aspectFit" class="del-img"></image>
+      <image  bind:tap="exportExcel" src="/img/down1.png" mode="aspectFit" class="down-img"></image>
     </view>
   </view>
-</view>
-<view class="icon-box">
-  <view>
-    <image src="/img/del.png" mode="aspectFit" class="del-img"></image>
-    <image  bind:tap="exportExcel" src="/img/down1.png" mode="aspectFit" class="down-img"></image>
+  <view class="echart_panel">
+    <ec-canvas ec="{{ ecLine }}"></ec-canvas>
   </view>
-</view>
-<view class="echart_panel">
-  <ec-canvas ec="{{ ecLine }}"></ec-canvas>
 </view>
 <!-- 设备名称-弹窗 -->
 <dialog bindclose="nameClose" asyncClose="{{true}}" bindconfirm="nameConfirm"  confirmButtonColor="{{mainColor}}"showCancelButton="{{true}}" useSlot="{{true}}" title='设备名称修改'       zIndex="{{zIndex}}" show="{{ nameVisible }}">
   <view class="order_item flex-h flex-vc">
       <view class="name">设备名称</view>
-      <input maxlength="{{10}}" class="input_text_sty" type="text" placeholder-class='input-placeholder' placeholder="请输入设备名称" bindinput="nameInput" />
+      <input value="{{name}}" maxlength="{{10}}" class="input_text_sty" type="text" placeholder-class='input-placeholder' placeholder="请输入设备名称" bindinput="nameInput" />
     </view>
 </dialog>
 <!-- 设置-弹窗 -->
@@ -55,6 +64,43 @@
   </view>
   <view class="order_item flex-h flex-vc">
       <view class="name">温度报警值</view>
-      <input maxlength="{{10}}" class="input_text_sty" type="text" placeholder-class='input-placeholder' placeholder="请输入温度报警值" bindinput="WenValueInput" />
+      <input maxlength="{{10}}" class="input_text_sty" type="number" placeholder-class='input-placeholder' placeholder="请输入温度报警值" bindinput="WenValueInput" value="{{setObj.value}}" />
     </view>
 </dialog>
+<!-- 历史记录弹窗 -->
+<!-- <van-popup
+  v-model="historyShow"
+  closeable
+  position="top"
+  :style="{ height: '100px' }"
+/> -->
+<van-popup
+  show="{{ historyShow }}"
+  position="bottom"
+  round="{{ round }}"
+  z-index="{{ 999 }}"
+  custom-class="vanPop"
+  bind:close="onClickOverlay"
+>
+  <view class="hsitoryTop">
+    <text style="font-weight: 500;">历史体温</text>
+    <van-icon
+      size="22px"
+      name="close"
+      custom-class="vanclose"
+      style="position: absolute;right: 10rpx;"
+      bind:click="openHistory"
+      data-param="{{false}}"
+    />
+  </view>
+  <view style="padding: 5rpx 0;display: flex;border: 1px solid #ebeef5;color: #909399;">
+    <view class="tableTop"><text>时间</text></view>
+    <view class="tableTop"><text>温度（{{WenInfo.unit}}）</text></view>
+  </view>
+  <scroll-view class="table-container" scroll-y="true">
+    <view wx:for="{{xlsxdata}}" wx:key="{{item.rgtime}}" style="display: flex;border: 1px solid #ebeef5;color: #606266;">
+      <view class="tableTop"><text>{{item.rgtime}}</text></view>
+      <view class="tableTop"><text>{{item.value}}</text></view>
+    </view>
+  </scroll-view>
+</van-popup>

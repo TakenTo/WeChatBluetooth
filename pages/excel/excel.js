@@ -18,7 +18,7 @@ function getOption(xData, data_cur, data_his) {
     },
     tooltip: {
       show: true,
-      trigger: 'axis'
+      trigger: 'axis',
     },
     xAxis: {
       type: 'category',
@@ -32,6 +32,8 @@ function getOption(xData, data_cur, data_his) {
     },
     yAxis: {
       type: 'value',
+      min: 'dataMin', // 最小值取数据中的最小值
+      max: 'dataMax',  // 最大值取数据中的最大值
       axisLine: {
         lineStyle: {
           color: '#999',
@@ -52,12 +54,18 @@ function getOption(xData, data_cur, data_his) {
       symbol: 'circle',
       symbolSize: 7,
       itemStyle: {
-        color: '#65E893', //折点颜色
-        // normal: {
-        //   lineStyle: {
-        //     color: '#dcdfe6' //折线颜色
-        //   }
-        // }
+        normal: {
+          label : {show: true},
+          // color: '#65E893', //折点颜色
+          color: (params) => {
+            // 根据值动态设置颜色
+            if (params.value > 38) {
+                return '#f56c6c'; // 超过 38 显示红色
+            } else {
+                return '#65E893'; // 其他显示绿色
+            }
+          },
+        }
       },
       lineStyle:{
         color: '#dcdfe6' //折线颜色
@@ -72,6 +80,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    historyShow:false,// 历史记录弹窗
     mainColor:'#65E893',
     zIndex:99999,
     setVisible:false,//设置弹窗visible
@@ -88,9 +97,58 @@ Page({
       name:'温度设备名',
       temperature:'36.5',
       unit:'℃',
-      time:'2024-11-20 12:15',
+      warnValue:37.5,
       dianliang:'20%',
-    }
+      warnStatus:'关', // 报警开关
+    },
+    xlsxdata:[
+      {
+        rgtime:"05:15",
+        value:36.8
+      },
+      {
+        rgtime:"06:15",
+        value:36.7
+      },
+      {
+        rgtime:"07:15",
+        value:36.8
+      },
+      {
+        rgtime:"08:15",
+        value:36.4
+      },
+      {
+        rgtime:"09:15",
+        value:35.8
+      },
+      {
+        rgtime:"10:15",
+        value:36.1
+      },
+      {
+        rgtime:"11:15",
+        value:36.2
+      },
+      {
+        rgtime:"13:15",
+        value:36.3
+      },
+      {
+        rgtime:"14:15",
+        value:36.4
+      },
+      {
+        rgtime:"15:15",
+        value:36.8
+      },
+      {
+        rgtime:"16:25",
+        value:36.9
+      },{
+        rgtime:"17:35",
+        value:37.1
+      }]
   },
   /**
    * 下载exportExcel
@@ -98,34 +156,26 @@ Page({
 exportExcel(){
    let that = this
     //表内容
-    let xlsxdata=[
-      {
-        rgtime:"2024-09-01 19:35:53",
-        value:36.8
-      },{
-        rgtime:"2024-09-02 19:35:53",
-        value:36.9
-      },{
-        rgtime:"2024-09-03 19:35:53",
-        value:40
-      }]
+    let xlsxdata=this.data.xlsxdata
  
     // 表头
     let title = ['时间','温度值'];
     let sheet = [title]
     // 数据整理
     xlsxdata.forEach(item => {
-      sheet.push([item.value,item.rgtime])
+      sheet.push([item.rgtime,item.value])
     });
     console.log('啥？',sheet)
     // return
   // XLSX插件使用
   var ws = XLSX.utils.aoa_to_sheet(sheet);
   var wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "excal2024");
+  let time =  base.formatTime(new Date())
+  // console.log('多少',time)
+  XLSX.utils.book_append_sheet(wb, ws, time);
   const fileData = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' }); 
   //保存的本地地址
-  const filePath = `${wx.env.USER_DATA_PATH}/excal2024.xlsx`; 
+  const filePath = `${wx.env.USER_DATA_PATH}/${time}.xlsx`; 
   // 写文件
   const fs = wx.getFileSystemManager()
     fs.writeFile({
@@ -178,7 +228,6 @@ exportExcel(){
           height: height,
           devicePixelRatio: dpr
         });
-        console.log('什么',chartLine)
         canvas.setChart(chartLine);
         that.getStudentDes()
       }
@@ -188,11 +237,10 @@ exportExcel(){
     let data = {
       grades:{
         exam_time:['05:10','06:10','07:10','08:10','09:10','10:10','11:10'],
-        percentage:[36, 38, 35, 34, 40, 38, 36],
+        percentage:[36.5, 37.3, 36, 35.8, 38.3,37.8, 38],
       }
     }
     // 成绩走势
-    console.log('第三方',chartLine)
     var xData = data.grades.exam_time;
     var data_cur = data.grades.percentage;
     var option = getOption(xData, data_cur);
@@ -259,11 +307,11 @@ offOnChange(e){
 setInfoConfirm(){
   let { isWarn,unit,wenValue} = this.data.setObj
   console.log('执行了么',this.data.setObj)
-  if(!isWarn || !unit || !wenValue){
+  if( !unit || !wenValue){
     base.toast('请输入完整')
     return
   }
-  this.setData({setVisible:false})
+  this.setInfoClose()
   // 要请求硬件之后再改页面上的值吧？
   wx.showToast({
     title: '成功',
@@ -278,13 +326,25 @@ nameConfirm(){
     base.toast('请输入完整')
     return
   }
-  this.setData({nameVisible:false})
+  let reg = /^[a-zA-Z0-9]{1,10}$/
+  if(!reg.test(name)){
+    base.toast('只能输入数字和字母')
+    return
+  }
+  this.nameClose()
   // 要请求硬件之后再改页面上的值吧？
   wx.showToast({
     title: '成功',
     icon: 'success',
     duration: 2000
   })  
+},
+// 历史记录弹窗
+openHistory(e){
+  const param = e.currentTarget.dataset.param; // 获取动态数据
+  this.setData({
+    historyShow:param
+  })
 },
   /**
    * 生命周期函数--监听页面初次渲染完成

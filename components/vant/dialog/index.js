@@ -65,10 +65,12 @@ VantComponent({
   },
   methods: {
     onConfirm() {
-      this.handleAction('confirm');
+      // this.handleAction('confirm');
+      this.$emit('confirm', { dialog: this });
     },
     onCancel() {
-      this.handleAction('cancel');
+      this.$emit('close');
+      // this.handleAction('cancel');
     },
     onClickOverlay() {
       this.onClose('overlay');
@@ -95,18 +97,18 @@ VantComponent({
       });
     },
     onClose(action) {
-      if (!this.data.asyncClose) {
-        this.close();
-      }
-      this.$emit('close', action);
-      // 把 dialog 实例传递出去，可以通过 stopLoading() 在外部关闭按钮的 loading
-      this.$emit(action, { dialog: this });
-      const callback = this.data[
-        action === 'confirm' ? 'onConfirm' : 'onCancel'
-      ];
-      if (callback) {
-        callback(this);
-      }
+      // if (!this.data.asyncClose) {
+      //   this.close();
+      // }
+      // this.$emit('close', action);
+      // // 把 dialog 实例传递出去，可以通过 stopLoading() 在外部关闭按钮的 loading
+      // this.$emit(action, { dialog: this });
+      // const callback = this.data[
+      //   action === 'confirm' ? 'onConfirm' : 'onCancel'
+      // ];
+      // if (callback) {
+      //   callback(this);
+      // }
     },
   },
 });
