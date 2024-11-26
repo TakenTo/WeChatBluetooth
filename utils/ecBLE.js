@@ -1,4 +1,7 @@
 const regeneratorRuntime = require('./regenerator/runtime.js')
+import { Base } from './base.js';
+
+
 const ecGBK = require('./ecGBK/ecGBK.js')
 
 const logEnable = false
@@ -209,6 +212,8 @@ const _createBLEConnection = () => {
                 log(res)
                 // {"errno":0,"errCode":0,"errMsg":"createBLEConnection:ok"}
                 resolve({ ok: true, errCode: 0, errMsg: '' })
+                // 连接成功了，发送指令
+                ecBLE.writeBLECharacteristicValue(base.formatTime(new Date(),true), true)
             },
             fail(res) {
                 log(res)

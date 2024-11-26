@@ -4,7 +4,17 @@
 const XLSX = require("../../utils/xlsx.mini.min.js");
 import { Base } from '../../utils/base.js';
 import * as echarts from '../../ec-canvas/echarts';
+const ecBLE = require('../../utils/ecBLE.js')
 const base = new Base();
+const getHead =  '0x68,0x73,0x63,0x6D,0x64,0x20'; // 设备给手机发-包头
+const giveHead = '0x68,0x73,0x63,0x6D,0x66,0x22'; // 手机给设备发-包头
+const tail='0x0d,0x0A';// 包尾
+const wenDuFaValue = '0x70' // 温度阈值
+const danWei = '0x71' // 单位
+const mingCheng = '0x72'//设备名称
+const baoJingOff='0x73' // 是否开启报警开关
+const deleteData='0x75' // 删除历史数据
+const getData='0x76'//查询历史数据
 // 35 - 45   
 let chartLine;
 function getOption(xData, data_cur, data_his) {
@@ -94,12 +104,12 @@ Page({
     xlsxpath:'', // 导出地址
     ecLine: {}, 
     WenInfo:{
-      name:'温度设备名',
-      temperature:'36.5',
-      unit:'℃',
-      warnValue:37.5,
+      name:'设备名',
+      temperature:'温度',
+      unit:',单位',
+      warnValue:'报警值',
       dianliang:'20%',
-      warnStatus:'关', // 报警开关
+      warnStatus:'报警开关', // 报警开关
     },
     xlsxdata:[
       {
@@ -232,6 +242,52 @@ exportExcel(){
         that.getStudentDes()
       }
     }})
+    // 监听蓝牙变化
+    ecBLE.onBLECharacteristicValueChange((str, strHex) => {
+      // 去除前两位
+     let arr = strHex.split(',')
+     //['0x17', '0x23', '0x03', '0x75']
+     let bbb = arr.slice(6,arr.length-2) 
+      if(bbb[0]==wenDuFaValue){ //温度阈值
+       let temp =  base.hexDeleteTow(bbb[1]) + '.' + base.hexDeleteTow(bbb[2])
+       that.setData({
+        ['WenInfo.warnValue']: temp,
+       })
+      }else if(bbb[0]==danWei){ // 单位
+        let r = ''
+        if(bbb[1] =='0x01'){
+          r = '℃'
+        }else if(bbb[1] =='0x02'){
+          r = '℉'
+        }
+        that.setData({
+          ['WenInfo.unit']: r,
+         })
+      }else if(bbb[0]==mingCheng){ // 名称
+
+      }else if(bbb[0]==baoJingOff){ // 报警开关
+        let r = ''
+        if(bbb[1] =='0x01'){
+          r = '开'
+        }else if(bbb[1] =='0x02'){
+          r = '关'
+        }
+        that.setData({
+          ['WenInfo.unit']: r,
+         })
+      }else if(bbb[0]==deleteData){
+        // 删除历史数据，啥也不干
+      }
+      else if(bbb[0]==getData){ // 查看历史数据
+
+      }else{ // 温度-时间（年-月-日-时-分）
+        // 0x24,0x11,0x24,0x15 ,0x23 后两位是温度
+        let temp =  base.hexDeleteTow(bbb[bbb.length-2]) + '.' + base.hexDeleteTow(bbb[length-1])
+       that.setData({
+        ['WenInfo.temperature']: temp,
+       })
+      }
+    })
   },
   getStudentDes: function () {
     let data = {

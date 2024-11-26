@@ -2,6 +2,7 @@
 const ecUI = require('../../utils/ecUI.js')
 const ecBLE = require('../../utils/ecBLE.js')
 
+
 let ctx
 let isCheckScroll = true
 let isCheckRevHex = false

@@ -53,6 +53,7 @@ Page({
             }    
         })  
         const device = event.currentTarget.dataset.name
+        // 和设备建立连接
         ecBLE.createBLEConnection(device.id)
     },
     openBluetoothAdapter() {
